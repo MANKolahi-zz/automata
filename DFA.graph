@@ -10,10 +10,6 @@ Graph[
 	]
 	node[
 		id	1
-		graphics[
-			x	0.000000
-			y	0.000000
-		]
 		LabelGraphics[ text  "B" ]
 		values[[isFinal:false] ]
 	]
