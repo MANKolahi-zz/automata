@@ -1,5 +1,5 @@
 import uni.madani.algorithms.DFAMinimizer;
-import uni.madani.model.DFA.DFA;
+import uni.madani.model.automata.fa.dfa.DFA;
 import uni.madani.model.graph.graph.Graph;
 import uni.madani.persist.filePersist.GMLParser;
 
@@ -14,5 +14,6 @@ public class DFAMinimizeTest {
         DFA dfa = new DFA(graph, "0", "1");
 
         System.out.println(new DFAMinimizer(dfa).getMinimizedDFA());
+
     }
 }

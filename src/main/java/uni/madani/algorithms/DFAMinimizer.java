@@ -1,16 +1,16 @@
 package uni.madani.algorithms;
 
-import uni.madani.model.DFA.DFA;
-import uni.madani.model.DFA.DFAVertex;
-import uni.madani.model.FAEdge;
-import uni.madani.model.PackVertex;
+import uni.madani.model.automata.fa.dfa.DFA;
+import uni.madani.model.automata.fa.dfa.DFAState;
+import uni.madani.model.automata.fa.FAEdge;
+import uni.madani.model.automata.fa.utils.PackVertex;
 
 import java.util.*;
 
 public class DFAMinimizer {
 
     private final DFA dfa;
-    private List<PackVertex<DFAVertex>> groups = new ArrayList<>();
+    private List<PackVertex<DFAState>> groups = new ArrayList<>();
 
     public DFAMinimizer(DFA dfa) {
         this.dfa = dfa;
@@ -20,8 +20,8 @@ public class DFAMinimizer {
 
         removeUnreachableVertex();
 
-        groups.add(new PackVertex<>());
-        groups.add(new PackVertex<>());
+        groups.add(new PackVertex<>(dfa));
+        groups.add(new PackVertex<>(dfa));
         dfa.getVertices().values().forEach(vertex -> {
             if (vertex.isFinal()) {
                 groups.get(0).getVertices().add(vertex);
@@ -29,22 +29,21 @@ public class DFAMinimizer {
                 groups.get(1).getVertices().add(vertex);
         });
 
-        PackVertex[] packVertices;
 
         boolean parted = true;
 
         while (parted) {
             parted = false;
-            packVertices = groups.toArray(PackVertex[]::new);
-            for (PackVertex<DFAVertex> vertices : packVertices) {
+
+            for (PackVertex<DFAState> vertices : groups) {
                 if (vertices.getVertices().size() > 0) {
 
-                    DFAVertex[] group = vertices.getVertices().toArray(DFAVertex[]::new);
+                    DFAState[] group = vertices.getVertices().toArray(DFAState[]::new);
                     var mainVertex = group[0];
-                    var newGroup = new PackVertex<DFAVertex>();
+                    var newGroup = new PackVertex<>(dfa);
 
                     for (int i = 1; i < group.length; i++) {
-                        DFAVertex vertex = group[i];
+                        DFAState vertex = group[i];
                         if (!equals(mainVertex, vertex)) {
                             newGroup.getVertices().add(vertex);
                             vertices.getVertices().remove(vertex);
@@ -61,22 +60,20 @@ public class DFAMinimizer {
             }
         }
 
-        packVertices = groups.toArray(PackVertex[]::new);
-
         var dfa = new DFA(this.dfa.getAlphabet().toArray(String[]::new));
-        var dfaVertices = new ArrayList<DFAVertex>();
+        var dfaVertices = new ArrayList<DFAState>();
         var edges = new ArrayList<FAEdge>();
 
-        for (int i = 0; i < packVertices.length; i++) {
+        for (int i = 0; i < groups.size(); i++) {
             long targetId = -1L;
-            PackVertex packVertex1 = packVertices[i];
-            var vertex = new DFAVertex(i, packVertex1.isStart(), packVertex1.isFinal(), dfa);
+            PackVertex<DFAState> packVertex1 = groups.get(i);
+            var vertex = new DFAState(i, packVertex1.isStart(), packVertex1.isFinal(), dfa);
             vertex.getVertexLabelGraphics().setText(packVertex1.toString());
             dfaVertices.add(vertex);
             for (String alphabet : dfa.getAlphabet()) {
-                HashSet<DFAVertex> targetVertices = packVertex1.getTargetVerticesOf(alphabet);
-                for (int j = 0; j < packVertices.length; j++) {
-                    PackVertex<DFAVertex> packVertex2 = packVertices[j];
+                HashSet<DFAState> targetVertices = packVertex1.getTargetVerticesOf(alphabet);
+                for (int j = 0; j < groups.size(); j++) {
+                    PackVertex<DFAState> packVertex2 = groups.get(i);
                     if (contains(packVertex2, targetVertices)) {
                         targetId = j;
                     }
@@ -93,8 +90,8 @@ public class DFAMinimizer {
         return dfa;
     }
 
-    private boolean contains(PackVertex<DFAVertex> packVertex, HashSet<DFAVertex> vertices) {
-        for (DFAVertex dfaVertex : vertices) {
+    private boolean contains(PackVertex<DFAState> packVertex, HashSet<DFAState> vertices) {
+        for (DFAState dfaVertex : vertices) {
             if (!packVertex.getVertices().contains(dfaVertex)) {
                 return false;
             }
@@ -102,7 +99,7 @@ public class DFAMinimizer {
         return true;
     }
 
-    private boolean equals(DFAVertex v1, DFAVertex v2) {
+    private boolean equals(DFAState v1, DFAState v2) {
         boolean equals = true;
         for (String alphabet : dfa.getAlphabet()) {
             var edge1 = v1.getEdge(alphabet);
@@ -127,11 +124,11 @@ public class DFAMinimizer {
     }
 
     private void removeUnreachableVertex() {
-        Collection<DFAVertex> vertices = dfa.getVertices().values();
+        Collection<DFAState> vertices = dfa.getVertices().values();
         var continues = true;
         while (continues) {
             continues = false;
-            for (DFAVertex vertex : vertices)
+            for (DFAState vertex : vertices)
                 if (vertex.getIn().size() <= 0 && !vertex.isStart()) {
                     dfa.removeVertex(vertex);
                     continues = true;

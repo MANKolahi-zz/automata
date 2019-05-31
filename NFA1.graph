@@ -1,0 +1,52 @@
+Graph[
+    node[
+   	    id	0
+    	LabelGraphics[ text  "A" ]
+    	values[[isFinal:false] [isStart:true] ]
+    ]
+    node[
+   	    id	1
+    	LabelGraphics[ text  "B" ]
+    	values[[isFinal:true] ]
+    ]
+    node[
+   	    id	2
+    	LabelGraphics[ text  "C" ]
+    	values[[isFinal:true] ]
+    ]
+    node[
+   	    id	3
+    	LabelGraphics[ text  "D" ]
+    	values[[isFinal:false] ]
+    ]
+	edge[
+    	source  0
+    	target  1
+    	values[[sticker:a] ]
+    ]
+    edge[
+        source  0
+        target  0
+        values[[sticker:lambda] ]
+    ]
+    edge[
+        source  1
+        target  2
+        values[[sticker:b] ]
+    ]
+    edge[
+        source  2
+        target  3
+        values[[sticker:lambda] ]
+    ]
+    edge[
+        source  2
+        target  3
+        values[[sticker:b] ]
+    ]
+    edge[
+        source  3
+        target  0
+        values[[sticker:lambda] ]
+    ]
+]

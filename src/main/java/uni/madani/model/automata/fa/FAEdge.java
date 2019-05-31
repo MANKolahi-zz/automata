@@ -1,11 +1,10 @@
-package uni.madani.model;
+package uni.madani.model.automata.fa;
 
-import uni.madani.model.graph.Edge.AbstractEdge;
+import uni.madani.model.automata.AutomataEdge;
 import uni.madani.model.graph.Edge.EdgeGraphics;
 import uni.madani.model.graph.Edge.EdgeLabelGraphics;
-import uni.madani.model.graph.graphValue.GraphElementValue;
 
-public class FAEdge extends AbstractEdge implements Comparable<FAEdge> {
+public class FAEdge extends AutomataEdge implements Comparable<FAEdge> {
 
     public FAEdge(long sourceId, long targetId, String sticker) {
         this(sourceId, targetId, 1, null, null, sticker);
@@ -13,12 +12,7 @@ public class FAEdge extends AbstractEdge implements Comparable<FAEdge> {
 
     public FAEdge(long sourceId, long targetId, long weight,
                   EdgeGraphics edgeGraphics, EdgeLabelGraphics edgeLabelGraphics, String sticker) {
-        super(sourceId, targetId, weight, edgeGraphics, edgeLabelGraphics);
-        values.addValue(new GraphElementValue("sticker", sticker));
-    }
-
-    public String getSticker() {
-        return values.getValue("sticker");
+        super(sourceId, targetId, weight, edgeGraphics, edgeLabelGraphics, sticker);
     }
 
     @Override
@@ -30,8 +24,8 @@ public class FAEdge extends AbstractEdge implements Comparable<FAEdge> {
     @Override
     public int compareTo(FAEdge faEdge) {
         return getSticker().compareTo(faEdge.getSticker()) &
-                Long.compare(sourceId,faEdge.getSourceId()) &
-                Long.compare(targetId,faEdge.getTargetId());
+                Long.compare(sourceId, faEdge.getSourceId()) &
+                Long.compare(targetId, faEdge.getTargetId());
     }
 
 }
